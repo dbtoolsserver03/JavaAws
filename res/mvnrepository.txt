@@ -4,6 +4,8 @@ JAVAツール利用の前提条件をまとめます。
 　・AWS Access Key ID（アクセスキー）
 　・AWS Secret Access Key（シークレットキー）
 
+	https://docs.aws.amazon.com/ja_jp/sdkref/latest/guide/file-location.html
+    
     例：
 	＞aws configure
 	AWS Access Key ID [None]: HKIA43GGCL4VHWRYZXM2
@@ -13,7 +15,8 @@ JAVAツール利用の前提条件をまとめます。
 	
 	
 ２．AWS S3に必要なjarファイルを利用できること。
-
+	https://docs.aws.amazon.com/ja_jp/sdk-for-java/v1/developer-guide/setup-build-tools.html
+	
 	案1.gradle利用できない場合
 	①．下記jarファイルを一つづつダウンロードする。
 	https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-core/1.12.445
@@ -29,7 +32,7 @@ JAVAツール利用の前提条件をまとめます。
 	②．ツールを製造する。
 	③．実行可能なjarファイルを生成します。
 
-
+	
 	案2．gradle利用可能の場合
 	gradleで上記必要なJARファイルを自動的にダウンロードできます。
 	https://docs.aws.amazon.com/ja_jp/sdk-for-java/v1/developer-guide/setup-project-gradle.html
