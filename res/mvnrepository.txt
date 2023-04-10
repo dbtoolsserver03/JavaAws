@@ -1,14 +1,40 @@
-https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-core/1.12.445
-https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-kms/1.12.445
-https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3/1.12.445
-https://mvnrepository.com/artifact/commons-logging/commons-logging/1.2
-https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient/4.5.14
-https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore/4.4.16
-https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations/2.14.2
-https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core/2.14.2
-https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind/2.14.2
-https://mvnrepository.com/artifact/joda-time/joda-time/2.12.5
+JAVAツール利用の前提条件をまとめます。
+
+１．AWS認証のため、下記二つ情報が提供できること。
+　・AWS Access Key ID（アクセスキー）
+　・AWS Secret Access Key（シークレットキー）
+
+    例：
+	＞aws configure
+	AWS Access Key ID [None]: HKIA43GGCL4VHWRYZXM2
+	AWS Secret Access Key [None]: A3wMUvgtEZiMtORRh6wHgTxYUknMGig9vjM3ASOx
+	Default region name [None]: ap-northeast-1
+	Default output format [None]: json
+	
+	
+２．AWS S3に必要なjarファイルを利用できること。
+
+	案1.gradle利用できない場合
+	①．下記jarファイルを一つづつダウンロードする。
+	https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-core/1.12.445
+	https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-kms/1.12.445
+	https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3/1.12.445
+	https://mvnrepository.com/artifact/commons-logging/commons-logging/1.2
+	https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient/4.5.14
+	https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore/4.4.16
+	https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations/2.14.2
+	https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core/2.14.2
+	https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind/2.14.2
+	https://mvnrepository.com/artifact/joda-time/joda-time/2.12.5
+	②．ツールを製造する。
+	③．実行可能なjarファイルを生成します。
 
 
-
-
+	案2．gradle利用可能の場合
+	gradleで上記必要なJARファイルを自動的にダウンロードできます。
+	https://docs.aws.amazon.com/ja_jp/sdk-for-java/v1/developer-guide/setup-project-gradle.html
+	そのあと、実行可能jarファイルをgradleで生成する。
+	
+３．POI必要なJARファイルダウンロードできること。
+　　（INPUTはEXCELファイル、　OUTPUTはEXCELファイル要望ある場合）
+	https://poi.apache.org/download.html
