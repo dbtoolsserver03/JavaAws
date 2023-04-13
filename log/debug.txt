@@ -1,0 +1,80 @@
+■■■ 000001
+↓↓↓ inputInfo [rowNum=2, awsPathA=s3://bucketsaisk01/, folderPathA=C:\file\aws_test\bucketsaisk01, fileNmA=a01xxxx.txt, awsPathB=s3://bucketsaisk02/, folderPathB=C:\file\aws_test\bucketsaisk02, fileNmB=bx_vis_XXXX.txt]
+false-->a.txt:a01\d{4}.txt
+true-->a010001.txt:a01\d{4}.txt
+true-->a010002.txt:a01\d{4}.txt
+true-->a010003.txt:a01\d{4}.txt
+false-->b.txt:a01\d{4}.txt
+false-->b.txt:bx_vis_\d{4}.txt
+false-->ba.txt:bx_vis_\d{4}.txt
+true-->bx_vis_0001.txt:bx_vis_\d{4}.txt
+true-->bx_vis_0003.txt:bx_vis_\d{4}.txt
+↑↑↑ outputInfo [rowNum=2, isOk=false, aMapFilter={0001=a010001.txt, 0002=a010002.txt, 0003=a010003.txt}, bMapFilter={0001=bx_vis_0001.txt, 0003=bx_vis_0003.txt}, noExistSet=[a010002.txt]]
+■■■ 000002
+↓↓↓ inputInfo [rowNum=3, awsPathA=s3://bucketsaisk01/YYYYMM/YYYYMMDD/, folderPathA=C:\file\aws_test\bucketsaisk01\YYYYMM\YYYYMMDD, fileNmA=T1_XXXX.csv.gz, awsPathB=s3://bucketsaisk02/send03/, folderPathB=C:\file\aws_test\bucketsaisk02\send03, fileNmB=BK_XXXX.YYYYMMDD.csv.gz]
+false-->A01_2023020113.gz:T1_\d{4}.csv.gz
+true-->T1_0001.csv.gz:T1_\d{4}.csv.gz
+true-->T1_0002.csv.gz:T1_\d{4}.csv.gz
+true-->T1_0003.csv.gz:T1_\d{4}.csv.gz
+false-->k1.gz:T1_\d{4}.csv.gz
+false-->k1_2023010112_2023010113.gz:T1_\d{4}.csv.gz
+false-->k1_2023010112_2023010114.gz:T1_\d{4}.csv.gz
+true-->BK_0001.20230101.csv.gz:BK_\d{4}.\d{8}.csv.gz
+true-->BK_0001.20230102.csv.gz:BK_\d{4}.\d{8}.csv.gz
+true-->BK_0003.20230101.csv.gz:BK_\d{4}.\d{8}.csv.gz
+false-->C02_2023020113_20230201.gz:BK_\d{4}.\d{8}.csv.gz
+false-->k2_20230101.gz:BK_\d{4}.\d{8}.csv.gz
+false-->k2_20230103.gz:BK_\d{4}.\d{8}.csv.gz
+false-->C02_2023020215.gz:T1_\d{4}.csv.gz
+true-->T1_0001.csv.gz:T1_\d{4}.csv.gz
+false-->k1.gz:T1_\d{4}.csv.gz
+false-->k1_2023010212_2023010218.gz:T1_\d{4}.csv.gz
+true-->BK_0001.20230101.csv.gz:BK_\d{4}.\d{8}.csv.gz
+true-->BK_0001.20230102.csv.gz:BK_\d{4}.\d{8}.csv.gz
+true-->BK_0003.20230101.csv.gz:BK_\d{4}.\d{8}.csv.gz
+false-->C02_2023020113_20230201.gz:BK_\d{4}.\d{8}.csv.gz
+false-->k2_20230101.gz:BK_\d{4}.\d{8}.csv.gz
+false-->k2_20230103.gz:BK_\d{4}.\d{8}.csv.gz
+↑↑↑ outputInfo [rowNum=3, isOk=false, aMapFilter={20230101_0001=C:\file\aws_test\bucketsaisk01\202301\20230101\T1_0001.csv.gz, 20230101_0002=C:\file\aws_test\bucketsaisk01\202301\20230101\T1_0002.csv.gz, 20230101_0003=C:\file\aws_test\bucketsaisk01\202301\20230101\T1_0003.csv.gz, 20230102_0001=C:\file\aws_test\bucketsaisk01\202301\20230102\T1_0001.csv.gz}, bMapFilter={20230101_0001=BK_0001.20230101.csv.gz, 20230101_0003=BK_0003.20230101.csv.gz, 20230102_0001=BK_0001.20230102.csv.gz}, noExistSet=[C:\file\aws_test\bucketsaisk01\202301\20230101\T1_0002.csv.gz]]
+■■■ 000003
+↓↓↓ inputInfo [rowNum=4, awsPathA=s3://bucketsaisk01/, folderPathA=C:\file\aws_test\bucketsaisk01, fileNmA=a.txt, awsPathB=s3://bucketsaisk02/, folderPathB=C:\file\aws_test\bucketsaisk02, fileNmB=a.txt]
+true-->a.txt:a.txt
+false-->a010001.txt:a.txt
+false-->a010002.txt:a.txt
+false-->a010003.txt:a.txt
+false-->b.txt:a.txt
+false-->b.txt:a.txt
+false-->ba.txt:a.txt
+false-->bx_vis_0001.txt:a.txt
+false-->bx_vis_0003.txt:a.txt
+↑↑↑ outputInfo [rowNum=4, isOk=false, aMapFilter={=a.txt}, bMapFilter={}, noExistSet=[a.txt]]
+■■■ 000004
+↓↓↓ inputInfo [rowNum=5, awsPathA=s3://bucketsaisk01/YYYYMM/YYYYMMDD/, folderPathA=C:\file\aws_test\bucketsaisk01\YYYYMM\YYYYMMDD, fileNmA=k1.gz, awsPathB=s3://bucketsaisk02/send03/, folderPathB=C:\file\aws_test\bucketsaisk02\send03, fileNmB=k2_YYYYMMDD.gz]
+ERROR:k1.gz  [x, ?, yyyymmddhh, yyyymmddhh_???, yyyymmdd_???]
+false-->A01_2023020113.gz:k1.gz
+false-->T1_0001.csv.gz:k1.gz
+false-->T1_0002.csv.gz:k1.gz
+false-->T1_0003.csv.gz:k1.gz
+true-->k1.gz:k1.gz
+false-->k1_2023010112_2023010113.gz:k1.gz
+false-->k1_2023010112_2023010114.gz:k1.gz
+ERROR:k2_YYYYMMDD.gz  [x, ?, yyyymmddhh, yyyymmddhh_???, yyyymmdd_???]
+false-->BK_0001.20230101.csv.gz:k2_\d{8}.gz
+false-->BK_0001.20230102.csv.gz:k2_\d{8}.gz
+false-->BK_0003.20230101.csv.gz:k2_\d{8}.gz
+false-->C02_2023020113_20230201.gz:k2_\d{8}.gz
+true-->k2_20230101.gz:k2_\d{8}.gz
+true-->k2_20230103.gz:k2_\d{8}.gz
+ERROR:k1.gz  [x, ?, yyyymmddhh, yyyymmddhh_???, yyyymmdd_???]
+false-->C02_2023020215.gz:k1.gz
+false-->T1_0001.csv.gz:k1.gz
+true-->k1.gz:k1.gz
+false-->k1_2023010212_2023010218.gz:k1.gz
+ERROR:k2_YYYYMMDD.gz  [x, ?, yyyymmddhh, yyyymmddhh_???, yyyymmdd_???]
+false-->BK_0001.20230101.csv.gz:k2_\d{8}.gz
+false-->BK_0001.20230102.csv.gz:k2_\d{8}.gz
+false-->BK_0003.20230101.csv.gz:k2_\d{8}.gz
+false-->C02_2023020113_20230201.gz:k2_\d{8}.gz
+true-->k2_20230101.gz:k2_\d{8}.gz
+true-->k2_20230103.gz:k2_\d{8}.gz
+↑↑↑ outputInfo [rowNum=5, isOk=false, aMapFilter={20230101_=C:\file\aws_test\bucketsaisk01\202301\20230101\k1.gz, 20230102_=C:\file\aws_test\bucketsaisk01\202301\20230102\k1.gz}, bMapFilter={20230101_=k2_20230101.gz, 20230103_=k2_20230103.gz}, noExistSet=[C:\file\aws_test\bucketsaisk01\202301\20230102\k1.gz]]

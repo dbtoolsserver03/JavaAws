@@ -22,8 +22,6 @@ public class MyPoiUtils {
 
 	public static void main(String[] args) {
 		
-		String str = "xxx.xls";
-		System.out.println(str.substring(str.lastIndexOf(".")+1));
 	}
 
 	public static Workbook getWorkBook(String filePath) throws Throwable {

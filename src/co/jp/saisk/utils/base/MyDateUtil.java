@@ -8,7 +8,7 @@ public final class MyDateUtil {
 		return getFormatDateTime(new Date(microsecond), pattarn);
 	}
 
-	public static String getFormatDateTime(Date date, String format) throws Throwable{
+	public static String getFormatDateTime(Date date, String format){
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		return sdf.format(date);
 	}

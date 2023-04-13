@@ -5,9 +5,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import com.amazonaws.AmazonServiceException;
@@ -23,9 +26,11 @@ import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
+import co.jp.saisk.utils.MyConst;
+import co.jp.saisk.utils.base.BeanMap;
+import co.jp.saisk.utils.base.MyStrUtils;
+
 public class AwsS3Utils {
-
-
 	
     private static Properties properties = new Properties();
     
@@ -39,8 +44,30 @@ public class AwsS3Utils {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
     }
+    
+//    
+//    /*
+//     * The ProfileCredentialsProvider will return your [default]
+//     * credential profile by reading from the credentials file located at
+//     * (~/.aws/credentials).
+//     */
+//    AWSCredentials credentials = null;
+//    try {
+//        credentials = new ProfileCredentialsProvider().getCredentials();
+//    } catch (Exception e) {
+//        throw new AmazonClientException(
+//                "Cannot load the credentials from the credential profiles file. " +
+//                "Please make sure that your credentials file is at the correct " +
+//                "location (~/.aws/credentials), and is in valid format.",
+//                e);
+//    }
+//
+//    AmazonS3 s3 = AmazonS3ClientBuilder.standard()
+//        .withCredentials(new AWSStaticCredentialsProvider(credentials))
+//        .withRegion("us-west-2")
+//        .build();
+//    
 	//  AWSCredentials credentials = new BasicAWSCredentials("アクセスキー","シークレットキー");
 	public static AWSCredentials credentials = new BasicAWSCredentials(
 			properties.getProperty("aws.accesskey"),
@@ -56,25 +83,45 @@ public class AwsS3Utils {
 			  //.withRegion(Regions.AP_NORTHEAST_1)
 			  .build();
 	
-	public static void main(String[] args) {
+	public static void main(String[] args)  {
 		
 		try {
+//			Map<String,String> repFolderMap= new LinkedHashMap<>();
+//			repFolderMap.put(MyConst.YYYYMMDD,MyConst.REG_YYYYMMDD );
+//			repFolderMap.put(MyConst.YYYYMM,MyConst.REG_YYYYMM);
+//			System.out.println(getPathSetLike("s3://bucketsaisk01/bucketsaisk01/YYYYMM/YYYYMMDD/", repFolderMap));
+			
+			//System.out.println(getNameSetByS3Path("s3://bucket-souka-test-001/20200501/", false));
+			//System.out.println(getFileNameSet("bucketsaisk02","bucket",true));
+			
+			
+			listAll();
+			
+		} catch (Throwable e) {
+			e.printStackTrace();
+		    System.exit(1);
+		}
+		 System.exit(0);
+	}
 
-			List<Bucket> buckets = s3client.listBuckets();
-			for(Bucket bucket : buckets) {
-			    System.out.println(bucket.getName());
-			    
-	            // 指定されたバケット配下のキーのオブジェクト（ファイル）リストを取得する。
-	            ObjectListing objectListing = s3client.listObjects(new ListObjectsRequest()
-	                    .withBucketName(bucket.getName())
-	                    //.withPrefix("20")
-	                    );
-	            for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-	                System.out.println(" - " + objectSummary.getKey() + "  " +
-	                                   "(size = " + objectSummary.getSize() + ")");
-	               // downLoadFile(bucket.getName(), objectSummary.getKey(), "C:\\file\\aws" + File.separator + bucket.getName() + File.separator);
-	                
-	            }
+	private static void listAll() {
+		List<Bucket> buckets = s3client.listBuckets();
+		for(Bucket bucket : buckets) {
+		    System.out.println(bucket.getName());
+		    
+		    // 指定されたバケット配下のキーのオブジェクト（ファイル）リストを取得する。
+		    ObjectListing objectListing = s3client.listObjects(new ListObjectsRequest()
+		            .withBucketName(bucket.getName())
+		            //.withPrefix("20")
+		            );
+		    for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
+		        System.out.println(" - " + objectSummary.getKey() + "  " +
+		                           "(size = " + objectSummary.getSize() + ")");
+		        downLoadFile(bucket.getName(), objectSummary.getKey(), "C:\\file\\aws_test" + File.separator + bucket.getName() + File.separator);
+		        
+		    }
+		    
+		    
 //	            System.out.println("---------------------");
 //	            
 //	            ListObjectsV2Result result = s3client.listObjectsV2(bucket.getName());
@@ -82,28 +129,87 @@ public class AwsS3Utils {
 //	            for (S3ObjectSummary os : objects) {
 //	                System.out.println("* " + os.getKey());
 //	            }
+		}
+	}
+	public static Set<String> getFileNameSet(String bucketName,String prefix, boolean hasSub) {
+		
+		ObjectListing aObjectListing =  MyStrUtils.isEmpty(prefix)?AwsS3Utils.s3client.listObjects(new ListObjectsRequest()
+				.withBucketName(bucketName)):AwsS3Utils.s3client.listObjects(new ListObjectsRequest()
+						.withBucketName(bucketName).withPrefix(prefix));
+		
+		Set<String> nameSet = getFileNm(aObjectListing);
+		
+		if (hasSub) {
+			return nameSet;
+		} else {
+			Set<String> filterNameSet = new TreeSet<>();
+			for (String key : nameSet) {
+				if (MyStrUtils.isEmpty(prefix)) {
+					if (MyStrUtils.getCntForSameStr(key,"/")==0) {
+						filterNameSet.add(key);
+					}
+				} else {
+					key = key.substring(prefix.length());
+					if (MyStrUtils.getCntForSameStr(key,"/")==1) {
+						filterNameSet.add(key.substring(1));
+					}
+				}
+
 			}
-		} catch (AmazonServiceException e) {
-			e.printStackTrace();
-		    System.err.println(e.getErrorMessage());
-		    System.exit(1);
+			return filterNameSet;
 		}
 	}
 	
+	public static Set<String> getAwsPathList(String awsCmd) {
+		
+		if(awsCmd.endsWith("/")) {
+			awsCmd = awsCmd.substring(0,awsCmd.length()-1);
+		}
+		
+		String pre = "s3://";
+		String bucketName="";
+		String prefix="";
+		
+		String afterStr = awsCmd.substring(pre.length());
+		if (afterStr.contains("/")) {
+			bucketName = afterStr.substring(0,afterStr.indexOf("/"));
+			prefix = afterStr.substring(bucketName.length()+"/".length());
+		} else {
+			bucketName = afterStr;
+		}
+		return getS3Path(bucketName, prefix);
+	}
 	
-	public static Set<String> getFileNm(ObjectListing objectListing, boolean hasSub) {
+	public static Set<String> getS3Path(String bucketName,String prefix) {
+		
+		ObjectListing objectListing =  MyStrUtils.isEmpty(prefix)?AwsS3Utils.s3client.listObjects(new ListObjectsRequest()
+				.withBucketName(bucketName)):AwsS3Utils.s3client.listObjects(new ListObjectsRequest()
+						.withBucketName(bucketName).withPrefix(prefix));
+		
+		
+		Set<String> retSet = new TreeSet<String>();
+        for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
+        	
+    		String key = objectSummary.getKey();
+    		if (key.endsWith("/")) {
+    			retSet.add("s3://" + bucketName + "/" + key);
+    		} else if (key.contains("/")) {
+    			retSet.add("s3://" + bucketName + "/" + key.substring(0, key.lastIndexOf("/")+1));
+    		}
+        }
+        return retSet;
+	}
+	
+	public static Set<String> getFileNm(ObjectListing objectListing) {
 		
 		Set<String> retLst = new TreeSet<String>();
         for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
         	
-        	String str = "";
     		String key = objectSummary.getKey();
     		if (key.endsWith("/")) {
     			// do nothing
     		} else if (key.contains("/")) {
-    			if (hasSub) {
-    				retLst.add(key);
-				}
+    			retLst.add(key);
     		} else {
     			retLst.add(key);
     		}
@@ -111,8 +217,84 @@ public class AwsS3Utils {
         return retLst;
 	}
 	
+	public static Map<String,BeanMap> getPathSetLike(String awsPattern, Map<String,String> regMap) throws Throwable {
+		
+		Map<String,BeanMap> retMap = new TreeMap<>();
+		if (!MyStrUtils.isHasReg(awsPattern,regMap)) {
+			retMap.put(awsPattern, new BeanMap());
+			return retMap;
+		}
+		
+		awsPattern = MyStrUtils.getStrByXXXUpperReg(awsPattern, regMap);
+		
+		String regEscape =MyStrUtils.funReplace(awsPattern, File.separator, MyConst.SIGN);
+		String regex =MyStrUtils.getRegexStrByRegMap(regEscape, regMap);
+		
+		Set<String> strSet = new LinkedHashSet<>();
+
+		for (String key : regMap.keySet()) {
+			strSet.add(key);
+		}
+		strSet.add("/");
+		
+		String awsPath = MyStrUtils.lrTrimStartEndBySet(awsPattern,strSet,false);
+		for (String str : getAwsPathList(awsPath)) {
+			System.out.println(MyStrUtils.funReplace(str, "/", MyConst.SIGN).matches(MyStrUtils.funReplace(regex, "/", MyConst.SIGN)) + "-->" + str + ":" + regex);
+			if (MyStrUtils.funReplace(str, "/", MyConst.SIGN).matches(MyStrUtils.funReplace(regex, "/", MyConst.SIGN))) {
+				retMap.put(str, MyStrUtils.getBeanMap(str,awsPattern,regMap));
+			}
+		}
+		return retMap;
+	}
+
+
+	/**
+	 * 
+	 * @param awsCmd s3://bucketsaisk02
+	 * @param b
+	 * @return
+	 */
+	public static Set<String> getNameSetByS3Path(String awsCmd, boolean hasSub) {
+
+		if(awsCmd.endsWith("/")) {
+			awsCmd = awsCmd.substring(0,awsCmd.length()-1);
+		}
+		
+		String pre = "s3://";
+		String bucketName="";
+		String prefix="";
+		
+		String afterStr = awsCmd.substring(pre.length());
+		if (afterStr.contains("/")) {
+			bucketName = afterStr.substring(0,afterStr.indexOf("/"));
+			prefix = afterStr.substring(bucketName.length()+"/".length());
+		} else {
+			bucketName = afterStr;
+		}
+		
+		return getFileNameSet(bucketName,prefix,hasSub);
+	}
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
 	public static File downLoadFile(String bucketName, String key,String toFolder) {
 		
 		File toFile = null;
@@ -122,7 +304,9 @@ public class AwsS3Utils {
 			toFolder = toFolder + key;
 		} else if (key.contains("/")) {
 			toName = key.substring(key.lastIndexOf("/")+1);
-			toFolder = toFolder + File.separator + key.substring(0,key.lastIndexOf("/")).replaceAll("/", File.separator);
+			//toFolder = toFolder + File.separator + key.substring(0,key.lastIndexOf("/")).replaceAll("/", File.separator);
+			toFolder = toFolder + File.separator + key.substring(0,key.lastIndexOf("/"));
+			toFolder = MyStrUtils.funReplace(toFolder, "/",  File.separator);
 			
 		} else {
 			toName = key;
@@ -135,8 +319,6 @@ public class AwsS3Utils {
 
 	    // ファイルダウンロード
 	    try {
-	    	
-	    	
 		    // ファイル保存先
 		    new File(toFolder).mkdirs();
 		    
@@ -160,8 +342,10 @@ public class AwsS3Utils {
 	AWS Secret Access Key [None]: O3wMUvgtEZiMtORRh6wHgTxYUknMGig9vjM3ASOx
 	Default region name [None]: ap-northeast-1
 	Default output format [None]: json
- 
- https://blog.51cto.com/beanxyz/2578835
+	
+ C:\Users\tech>aws s3 ls s3://bucketsaisk01/bucketsaisk01/202301/20230101/
+
+https://blog.51cto.com/beanxyz/2578835
 https://g-weblog.com/blog/26
 
 
@@ -185,4 +369,18 @@ arn:aws:iam::883031170858:user/saisk
         }
     ]
 }
+
+
+コマンド	説明
+aws s3 ls	バケットの一覧を表示する
+aws s3 ls s3://{バケット名}/{パス}	バケットの内容を表示する
+aws s3 mb s3://{バケット名}	バケットを作成する
+aws s3 rb s3://{バケット名}	バケットを削除する(空でない場合は削除されない)
+aws s3 rb s3://{バケット名} --force	バケットを削除する(空でなくても削除される)
+aws s3 sync {フォルダパス} s3://{バケット名}/{パス}	バケットの内容をローカルのフォルダと同期する(追加・更新のみで削除されない)
+aws s3 sync {フォルダパス} s3://{バケット名}/{パス} --delete	バケットの内容をローカルのフォルダと同期する(削除もされる)
+aws s3 cp {ファイルパス} s3://{バケット名}/{パス}	ローカルのファイルをバケットにコピーする
+aws s3 mv {ファイルパス} s3://{バケット名}/{パス}	ローカルのファイルをバケットに移動する
+aws s3 rm s3://{バケット名}/{ファイルパス}	バケットのファイルを削除する
+aws s3 rm s3://{バケット名}/{フォルダパス} --recursive	バケットのフォルダを削除する
  */

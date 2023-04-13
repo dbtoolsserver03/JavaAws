@@ -3,15 +3,15 @@ package co.jp.saisk.utils.base;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import co.jp.saisk.utils.MyConst;
 import co.jp.saisk.utils.file.MyFileConst;
 
-
-
 public class MyStrUtils {
-	public static final String NUMBER_INTEGER = "^[0-9]*.[0]*$";
+	
+	
 	public static int getBitesLength(String str) {
 		int ret = 0;
 
@@ -193,7 +193,7 @@ public class MyStrUtils {
 	}
 	public static String getNumberByTrimDot0(String str) {
 		if (MyStrUtils.isNotEmpty(str)) {
-			if (str.matches(NUMBER_INTEGER)) {
+			if (str.matches(MyConst.NUMBER_INTEGER)) {
 				str = String.valueOf(getIntVal(str));
 			}
 		}
@@ -205,5 +205,216 @@ public class MyStrUtils {
 	}
 	public static long getLongVal(String cellContents) {
 		return (long) Double.parseDouble(cellContents);
+	}
+
+	public static String getXXX(String fileNmXXX, String targetX) {
+		
+		String retStr = getXXX(fileNmXXX,targetX,true);
+		if (retStr.length() == 0) {
+			retStr = getXXX(fileNmXXX,targetX,false);
+		}
+		return retStr;
+	}
+	
+	public static String getXXX(String fileNmXXX, String targetX, boolean isUpper) {
+
+		targetX = isUpper ? targetX.toUpperCase():targetX.toLowerCase();
+		String retStr = "";
+		String key = targetX;
+
+		while (fileNmXXX.contains(key)) {
+			key = key + targetX;
+			retStr = retStr + targetX;
+		}
+		
+		return retStr;
+	}
+
+	public static String getXXX(String filePattern, Set<String> repSet) throws Throwable {
+		
+		String retStr = "";
+		for (String key : repSet) {
+			retStr = getXXX(filePattern,key);
+			if (MyStrUtils.isNotEmpty(retStr)) {
+				return retStr;
+			}
+		}
+		return retStr;
+	}
+	
+
+	public static String getStrByXXXUpper(String str, Set<String> codeSet) {
+		
+		for (String code : codeSet) {
+			str=getStrByXXXUpper(str,code);
+		}
+		return str;
+		
+	}
+	public static String getStrByXXXUpper(String str, Map<String,String> codeMap) {
+		
+		for (String code : codeMap.keySet()) {
+			str=getStrByXXXUpper(str,code);
+		}
+		return str;
+		
+	}
+	
+	public static String getStrByXXXUpperReg(String str, Map<String,String> codeMap) {
+		
+		for (Entry<String,String> entry : codeMap.entrySet()) {
+			str=getStrByXXXUpper(str,entry.getKey());
+			str = str.replaceAll(entry.getKey(), entry.getValue());
+		}
+		return str;
+		
+	}
+	
+	public static String getStrByXXXUpper(String str, String code) {
+		
+		String retStr = str;
+		
+		String strUpper = str.toUpperCase();
+		String codeUpper = code.toUpperCase();
+		if (strUpper.contains(codeUpper)) {
+			StringBuffer retSb = new StringBuffer();
+			String endStr="";
+			int posStart = 0;
+			
+			while (strUpper.contains(codeUpper)) {
+				int posXXXStart = strUpper.indexOf(codeUpper);
+				int posXXXEnd = posXXXStart + codeUpper.length();
+				retSb.append(str.substring(posStart, posStart+posXXXStart));
+				retSb.append(codeUpper);
+				posStart=posXXXEnd;
+				strUpper=strUpper.substring(posXXXEnd);
+				endStr = str.substring(retSb.toString().length());
+			}
+			retSb.append(endStr);
+			retStr = retSb.toString();
+		}
+
+		return retStr;
+	}
+
+
+	public static String getRegexStrByRegMap(String foldPattern, Map<String, String> repFolderMap) {
+		String retStr = foldPattern;
+		
+		for (Entry<String, String> entry : repFolderMap.entrySet()) {
+			retStr = retStr.replaceAll(entry.getKey(), entry.getValue());
+		}
+
+		return retStr;
+	}
+	public static String funReplace(String rStr, String rFix, String rRep) {
+		if (isEmpty(rStr)) {
+			return "";
+		}
+		int l = 0;
+		String gRtnStr = rStr;
+		do {
+			l = rStr.indexOf(rFix, l);
+			if (l == -1)
+				break;
+			gRtnStr = rStr.substring(0, l) + rRep
+					+ rStr.substring(l + rFix.length());
+			l += rRep.length();
+			rStr = gRtnStr;
+		} while (true);
+		return gRtnStr.substring(0, gRtnStr.length());
+	}
+	public static boolean isLRContaisStr(String str, Set<String> strSet,boolean isStart) {
+		
+		boolean ret = false;
+		
+		if (isStart) {
+			for (String key : strSet) {
+				if (str.startsWith(key)) {
+					ret = true;
+					break;
+				}
+			}
+		} else {
+			for (String key : strSet) {
+				if (str.endsWith(key)) {
+					ret = true;
+					break;
+				}
+			}
+		}
+		return ret;
+		
+	}
+	public static String lrTrimStartEndBySet(String str, Set<String> strSet,boolean isStart) {
+
+		if (MyStrUtils.isEmpty(str)) {
+			return "";
+		} else if (MyStrUtils.isEmpty(strSet)) {
+			return str;
+		}
+
+		if (isStart) {
+			
+			while (isLRContaisStr(str,strSet,isStart)) {
+				for (String key : strSet) {
+					if (str.contains(key)) {
+						str = str.substring(key.length());
+					}
+				}
+			}
+
+		} else {
+			while (isLRContaisStr(str,strSet,isStart)) {
+				for (String key : strSet) {
+					if (str.contains(key)) {
+						str = str.substring(0,str.lastIndexOf(key));
+					}
+				}
+			}
+		}
+
+		return str;
+	}
+	public static String rightFillChar(String str, String c, int length) {
+		while (length > str.length()) {
+			str += c;
+		}
+		return str;
+	}
+	public static int getCntForSameStr(String key, String str) {
+		
+		int retNum = 0;
+		while (key.contains(str)) {
+			key = key.substring(key.indexOf(str)+1);
+			retNum++;
+		}
+		
+		return retNum;
+	}
+	public static void main(String[] args) {
+		System.out.println(getCntForSameStr("aayyyymmddbbyyyymmddccyyyymma", "mm"));
+	}
+
+	public static BeanMap getBeanMap(String str, String awsPattern, Map<String, String> regMap) {
+		BeanMap bean = new BeanMap();
+		
+		for (String key : regMap.keySet()) {
+			if (awsPattern.contains(key)) {
+				bean.map.put(key, str.substring(awsPattern.indexOf(key), awsPattern.indexOf(key) + key.length()));
+				str = funReplace(str, key, rightFillChar(MyConst.SIGN_AT,MyConst.SIGN_AT,key.length()));
+			}
+		}
+		return bean;
+	}
+
+	public static boolean isHasReg(String foldPattern, Map<String, String> regFolderMap) {
+		boolean ret = false;
+		for (String str : regFolderMap.keySet()) {
+			if (foldPattern.toUpperCase().contains(str)) {
+				ret = true;
+			}
+		}
+		return ret;
 	}
 }
