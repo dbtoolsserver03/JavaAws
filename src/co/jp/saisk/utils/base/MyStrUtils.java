@@ -396,18 +396,6 @@ public class MyStrUtils {
 		System.out.println(getCntForSameStr("aayyyymmddbbyyyymmddccyyyymma", "mm"));
 	}
 
-	public static BeanMap getBeanMap(String str, String awsPattern, Map<String, String> regMap) {
-		BeanMap bean = new BeanMap();
-		
-		for (String key : regMap.keySet()) {
-			if (awsPattern.contains(key)) {
-				bean.map.put(key, str.substring(awsPattern.indexOf(key), awsPattern.indexOf(key) + key.length()));
-				str = funReplace(str, key, rightFillChar(MyConst.SIGN_AT,MyConst.SIGN_AT,key.length()));
-			}
-		}
-		return bean;
-	}
-
 	public static boolean isHasReg(String foldPattern, Map<String, String> regFolderMap) {
 		boolean ret = false;
 		for (String str : regFolderMap.keySet()) {
@@ -416,5 +404,12 @@ public class MyStrUtils {
 			}
 		}
 		return ret;
+	}
+	
+	public static String trimRChar(String str,String trimStr) {
+		while(str.endsWith(trimStr)) {
+			str = str.substring(0,str.length()-trimStr.length());
+		}
+		return str;
 	}
 }

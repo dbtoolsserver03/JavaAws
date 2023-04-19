@@ -1,16 +1,14 @@
 package co.jp.saisk.utils.file;
 
 import java.io.File;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import co.jp.saisk.utils.MyConst;
-import co.jp.saisk.utils.base.BeanMap;
 import co.jp.saisk.utils.base.MyStrUtils;
 public class MyDirectory {
 
@@ -113,47 +111,34 @@ public class MyDirectory {
 		String command = "cmd /c copy "+ fromFile.getAbsolutePath() + " " + toFile.getAbsolutePath() + File.separator;
 		Runtime.getRuntime().exec(command).waitFor();
 	}
-	public static void main(String[] args) throws Throwable {
-		
-		Map<String,String> repFolderMap= new LinkedHashMap<>();
-		repFolderMap.put(MyConst.YYYYMMDD,MyConst.REG_YYYYMMDD );
-		repFolderMap.put(MyConst.YYYYMM,MyConst.REG_YYYYMM);
-			
-		System.out.println(getFolderSetLike("C:\\soft\\pleiades-2023-03-java-win-64bit-jre_20230326\\workspace0331Boot\\JavaAws\\tmp\\aws_test\\bucketsaisk01\\YYYYMM\\YYYYMMDD",repFolderMap));
-	}
 
-	
-	public static Map<String,BeanMap> getFolderSetLike(String foldPattern, Map<String,String> regFolderMap) throws Throwable {
-		Map<String,BeanMap> retMap = new TreeMap<>();
-		if (!MyStrUtils.isHasReg(foldPattern,regFolderMap)) {
-			retMap.put(foldPattern, new BeanMap());
-			return retMap;
+
+	public static Map<String, String> getFolderSetLike(String folderPath, String subPathReg,String commonKeyFolder) {
+		Map<String,String> retMap = new TreeMap<>();
+		if (folderPath.endsWith(File.separator)) {
+			folderPath = folderPath.substring(0,folderPath.length()-1);
 		}
-
-		//foldPattern = MyStrUtils.getStrByXXXUpperReg(foldPattern, regFolderMap);
-		foldPattern = MyStrUtils.getStrByXXXUpper(foldPattern, regFolderMap);
-
-		String regEscape =MyStrUtils.funReplace(foldPattern, File.separator, MyConst.SIGN);
-		String regex =MyStrUtils.getRegexStrByRegMap(regEscape, regFolderMap);
 		
-		Set<String> strSet = new LinkedHashSet<>();
-
-		for (String key : regFolderMap.keySet()) {
-			strSet.add(key);
-		}
-		strSet.add(File.separator);
-		
-		String folderPath = MyStrUtils.lrTrimStartEndBySet(foldPattern,strSet,false);
-		for (File f : getFoldersList(folderPath)) {
-			String str = f.getAbsolutePath();
-			
-			System.out.println(MyStrUtils.funReplace(str, File.separator, MyConst.SIGN).matches(regex) + "-->" + str + ":" + regex);
-			if (MyStrUtils.funReplace(str, File.separator, MyConst.SIGN).matches(regex)) {
-				retMap.put(str, MyStrUtils.getBeanMap(str,foldPattern,regFolderMap));
+		if (MyStrUtils.isEmpty(subPathReg)) {
+			retMap.put(subPathReg, folderPath);
+		} else {
+			for (File f : getFoldersList(folderPath)) {
+				String str = f.getAbsolutePath().substring(folderPath.length()+1);
+				if (commonKeyFolder.length()==0) {
+					retMap.put(str, f.getAbsolutePath());
+				} else {
+					Pattern p = Pattern.compile(commonKeyFolder);
+					Matcher m = p.matcher(str);
+					if (m.find()) {
+						retMap.put(m.group(),f.getAbsolutePath());
+					}
+				}
 			}
 		}
+
 		return retMap;
 	}
+
 
 
 }

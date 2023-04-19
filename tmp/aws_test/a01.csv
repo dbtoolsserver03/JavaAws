@@ -1,2 +1,2 @@
-﻿No.,AWS_PATH_A,FOLDER_PATH_A,FILE_NM_A,AWS_PATH_B,FOLDER_PATH_B,FILE_NM_B,check,A Files cnt,B Files cnt,notExistInB,A Files,B Files
-3,s3://bucketsaisk01/,C:\file\aws_test\bucketsaisk01,a.txt,s3://bucketsaisk02/,C:\file\aws_test\bucketsaisk02,a.txt,,,,,,
+﻿No.,file from reg,file to reg,file common key,aws path from,aws path to,sub path from reg,sub path to reg,path key,folder from,folder to,,
+NO.2,T1_\d{4}.csv.gz,BK_\d{4}.\d{8}.csv.gz,(\d{4}),s3://bucketsaisk01/,s3://bucketsaisk02/send03/,\d{6}/\d{8},NULL,NULL,NULL,NULL,C:\soft\pleiades-2023-03-java-win-64bit-jre_20230326\workspace0331Boot\JavaAws\tmp\aws_test\bucketsaisk01,C:\soft\pleiades-2023-03-java-win-64bit-jre_20230326\workspace0331Boot\JavaAws\tmp\aws_test\bucketsaisk02
