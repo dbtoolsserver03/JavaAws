@@ -256,7 +256,15 @@ public class AwsS3Utils {
 				String str = key.substring(awsPath.length()+1);
 				if (str.matches(subPathReg)) {
 					if (commonKeyFolder.length() == 0) {
-						retMap.put(str, key);
+						if (MyStrUtils.isEmpty(subPathReg)) {
+							retMap.put(str, key);
+						} else {
+							Pattern p = Pattern.compile("("+subPathReg+")");
+							Matcher m = p.matcher(str);
+							if (m.find()) {
+								retMap.put(m.group(),key);
+							}
+						}
 					} else {
 						Pattern p = Pattern.compile(commonKeyFolder);
 						Matcher m = p.matcher(str);
