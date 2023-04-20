@@ -1,25 +1,22 @@
 ■■■NO.2 start
-↓↓↓ inputInfo [rowNum=1, caseNo=NO.2, fileNmAReg=T1_\d{4}.csv.gz, fileNmBReg=BK_\d{4}.\d{8}.csv.gz, commonKeyFile=(\d{4}), awsPathA=s3://bucketsaisk01, awsPathB=s3://bucketsaisk02/send03, subPathAReg=\d{6}/\d{8}, subPathBReg=, commonKeyFolder=, folderPathA=, folderPathB=]
-path from :{202301/20230101=s3://bucketsaisk01/202301/20230101, 202301/20230102=s3://bucketsaisk01/202301/20230102}
-path to   :{=s3://bucketsaisk02/send03}
-↑↑↑ outputInfo [rowNum=1, caseNo=NO.2, isOk=false, aMapFilter={202301/20230101={0001=T1_0001.csv.gz, 0002=T1_0002.csv.gz, 0003=T1_0003.csv.gz}, 202301/20230102={0001=T1_0001.csv.gz}}, bMapFilter={={0001=BK_0001.20230102.csv.gz, 0003=BK_0003.20230101.csv.gz}}, noExistMap={T1_0002.csv.gz=s3://bucketsaisk01/202301/20230101/T1_0002.csv.gz}]
+↓↓↓ inputInfo [rowNum=1, caseNo=NO.2, fileNmAReg=T1_\d{4}.csv.gz, fileNmBReg=BK_\d{4}.\d{8}.csv.gz, commonKeyFile=(\d{4}), awsPathA=s3://bucketsaisk01, awsPathB=s3://bucketsaisk02/send03, subPathAReg=\d{6}\\\d{8}, subPathBReg=, commonKeyFolder=, folderPathA=C:\file\aws_test\bucketsaisk01, folderPathB=C:\file\aws_test\bucketsaisk02\send03]
+path from :{202301\20230101=C:\file\aws_test\bucketsaisk01\202301\20230101, 202301\20230102=C:\file\aws_test\bucketsaisk01\202301\20230102}
+path to   :{=C:\file\aws_test\bucketsaisk02\send03}
+↑↑↑ outputInfo [rowNum=1, caseNo=NO.2, isOk=false, aMapFilter={202301\20230101={20230101_0001=T1_0001.csv.gz}, 202301\20230102={20230102_0001=T1_0001.csv.gz}}, bMapFilter={={20230101_0001=BK_0001.20230101.csv.gz}}, noExistMap={T1_0001.csv.gz=C:\file\aws_test\bucketsaisk01\202301\20230102\T1_0001.csv.gz}]
 ■■■NO.2 end
 ---------------------------
 OK CASE LIST :(0)
 ---------------------------
 NG CASE LIST :(1)
 ▼▼▼NO.2
-input  fille list :(4)
-s3://bucketsaisk01/202301/20230101/T1_0001.csv.gz
-s3://bucketsaisk01/202301/20230101/T1_0002.csv.gz
-s3://bucketsaisk01/202301/20230101/T1_0003.csv.gz
-s3://bucketsaisk01/202301/20230102/T1_0001.csv.gz
-output  fille list :(2)
-s3://bucketsaisk02/send03/BK_0001.20230102.csv.gz
-s3://bucketsaisk02/send03/BK_0003.20230101.csv.gz
+input  fille list :(2)
+C:\file\aws_test\bucketsaisk01\202301\20230101\T1_0001.csv.gz
+C:\file\aws_test\bucketsaisk01\202301\20230102\T1_0001.csv.gz
+output  fille list :(1)
+C:\file\aws_test\bucketsaisk02\send03\BK_0001.20230101.csv.gz
 ng file list :(1)
-s3://bucketsaisk01/202301/20230101/T1_0002.csv.gz
+C:\file\aws_test\bucketsaisk01\202301\20230102\T1_0001.csv.gz
 ---------------------------
-begin at :20230420100133561
-end   at :20230420100145791
-cost time:12s230ms
+begin at :20230420160459225
+end   at :20230420160512319
+cost time:13s094ms

@@ -125,7 +125,15 @@ public class MyDirectory {
 			for (File f : getFoldersList(folderPath)) {
 				String str = f.getAbsolutePath().substring(folderPath.length()+1);
 				if (commonKeyFolder.length()==0) {
-					retMap.put(str, f.getAbsolutePath());
+					if (MyStrUtils.isEmpty(subPathReg)) {
+						retMap.put(str, f.getAbsolutePath());
+					} else {
+						Pattern p = Pattern.compile("("+subPathReg+")");
+						Matcher m = p.matcher(str);
+						if (m.find()) {
+							retMap.put(m.group(),f.getAbsolutePath());
+						}
+					}
 				} else {
 					Pattern p = Pattern.compile(commonKeyFolder);
 					Matcher m = p.matcher(str);

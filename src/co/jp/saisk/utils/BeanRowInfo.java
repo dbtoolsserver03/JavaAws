@@ -108,7 +108,6 @@ public class BeanRowInfo {
 				String fileNm = entryFile.getValue();
 				if (commonKeyFolder.length() == 0) {
 					if (bMapFilter.get("").containsKey(fileKey)) {
-
 					} else {
 						noExistMap.put(fileNm, aPathMap.get(pathKey) + this.aFolderSeparator + fileNm);
 					}
@@ -124,20 +123,30 @@ public class BeanRowInfo {
 		if (noExistMap.isEmpty()&& aFileCnt == bFileCnt) {
 			isOk = true;
 		}
-		
 	}
 
 	public void doFilefillter() throws Throwable {
 
 		for (Entry<String, String> entryPath : aPathMap.entrySet()) {
-			Map<String, String> fileNmMap = getFileFilter(aFileMap.get(entryPath.getKey()), fileNmAReg);
-			aMapFilter.put(entryPath.getKey(), fileNmMap);
-			aFileCnt += fileNmMap.size();
+			Map<String, String> fileNmMap = getFileFilter(entryPath.getKey(),aFileMap.get(entryPath.getKey()), fileNmAReg);
+			if (MyStrUtils.isNotEmpty(fileNmMap)) {
+				aMapFilter.put(entryPath.getKey(), fileNmMap);
+				aFileCnt += fileNmMap.size();
+			}
 		}
 		for (Entry<String, String> entryPath : bPathMap.entrySet()) {
-			Map<String, String> fileNmMap = getFileFilter(bFileMap.get(entryPath.getKey()), fileNmBReg);
-			bMapFilter.put(entryPath.getKey(), fileNmMap);
-			bFileCnt += fileNmMap.size();
+			Map<String, String> fileNmMap = getFileFilter(entryPath.getKey(),bFileMap.get(entryPath.getKey()), fileNmBReg);
+			if (MyStrUtils.isNotEmpty(fileNmMap)) {
+				bMapFilter.put(entryPath.getKey(), fileNmMap);
+//				for (Entry<String,String> entryFile : fileNmMap.entrySet()) {
+//					if (entryFile.getValue().contains(MyConst.SLIP)) {
+//						bFileCnt += entryFile.getValue().split(MyConst.SLIP).length;
+//					} else {
+//						bFileCnt++;
+//					}
+//				}
+				bFileCnt += fileNmMap.size();
+			}
 		}
 	}
 
@@ -148,7 +157,7 @@ public class BeanRowInfo {
 				: MyDirectory.getFolderSetLike(folderPathB, subPathBReg, commonKeyFolder);
 	}
 
-	public Map<String, String> getFileFilter(Set<String> fileSet, String filePattern) {
+	public Map<String, String> getFileFilter(String path, Set<String> fileSet, String filePattern) {
 		Map<String, String> retMap = new TreeMap<>();
 		for (String str : fileSet) {
 			System.out.println(str.matches(filePattern) + "-->" + str + ":" + filePattern);
@@ -156,7 +165,34 @@ public class BeanRowInfo {
 				Pattern p = Pattern.compile(this.commonKeyFile);
 				Matcher m = p.matcher(str);
 				if (m.find()) {
-					retMap.put(m.group(), str);
+					String key = m.group();
+//					if (retMap.containsKey(key)) {
+//						str = retMap.get(key) + MyConst.SLIP + str;
+//					}
+					
+					String yyyymmdd = "\\d{8}";
+					if (MyStrUtils.isNotEmpty(this.subPathAReg) 
+							&& MyStrUtils.isNotEmpty(this.fileNmBReg)
+							&& this.subPathAReg.contains(yyyymmdd)
+							&& this.fileNmBReg.contains(yyyymmdd)
+							) {
+						String matchCode = "("+yyyymmdd+")";
+						Pattern pYYYYMMDD = Pattern.compile(matchCode);
+						if (this.fileNmAReg.equals(filePattern)) {
+							Matcher mYYYYMMDD = pYYYYMMDD.matcher(path);
+							if (mYYYYMMDD.find()) {
+								retMap.put(mYYYYMMDD.group() + "_" + key, str);
+							}
+									
+						} else {
+							Matcher mYYYYMMDD = pYYYYMMDD.matcher(str);
+							if (mYYYYMMDD.find()) {
+								retMap.put(mYYYYMMDD.group() + "_" + key, str);
+							}
+						}
+					} else {
+						retMap.put(key, str);	
+					}
 				}
 			}
 		}
@@ -207,7 +243,15 @@ public class BeanRowInfo {
 		lst.add("output  fille list :" + "(" + bFileCnt + ")");
 		for (Entry<String, Map<String, String>> entry : bMapFilter.entrySet()) {
 			for (Entry<String, String> entryFile : entry.getValue().entrySet()) {
-				lst.add(bPathMap.get(entry.getKey()) + bFolderSeparator + entryFile.getValue());
+//				if (entryFile.getValue().contains(MyConst.SLIP)) {
+//					for (String str : entryFile.getValue().split(MyConst.SLIP)) {
+//						lst.add(bPathMap.get(entry.getKey()) + bFolderSeparator + str);	
+//					}
+//					
+//				} else {
+					lst.add(bPathMap.get(entry.getKey()) + bFolderSeparator + entryFile.getValue());	
+//				}
+				
 			}
 		}
 		if (!isOk) {
