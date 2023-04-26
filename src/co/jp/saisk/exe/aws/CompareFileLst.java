@@ -18,23 +18,51 @@ import co.jp.saisk.utils.log.MyLog5j;
 public class CompareFileLst {
 	public static String PROPERTIES_FOLDER = "tmp/aws_test";
 	public static String PROPERTIES_FILE = "a01.csv";
-
+	public static int retCode = 0;
+	public static int okCnt = 0;
+	public static int ngCnt = 0;
+	
+	
+	private static void initProperties(String[] args) {
+		if (args ==null || args.length==0) {
+			System.out.println("propertiesファイルを指定ください");
+		}
+		PROPERTIES_FILE=args[0];
+	}
 	public static void main(String[] args) {
+		
 		Date begin = new Date();
 		
 		try {
+			
+			initProperties(args);
 			String toolPath = new File("").getCanonicalPath() + File.separator ;
 			MyLog5j.init(toolPath+"log", "debug.txt", MyFileConst.ENCODE_UTF_8);
 			run();
 		} catch (Throwable e) {
+			retCode = 2;
 			e.printStackTrace();
+			try {
+				for (StackTraceElement obj : e.getStackTrace()) {
+					MyLog5j.writeLine(obj.toString());
+				}
+			} catch (Throwable e2) {
+				e2.printStackTrace();
+			}
 		} finally {
 			Date end = new Date();
 			try {
 				MyLog5j.writeLine("---------------------------");
+				MyLog5j.writeLine("OK CASE CNT :" + "(" + okCnt+")");
+				MyLog5j.writeLine("NG CASE CNT :" + "(" + okCnt+")");
+				if (retCode!=0) {
+					MyLog5j.writeLine("ERROR OCCURED !");
+				}
+				MyLog5j.writeLine("---------------------------");
 				MyLog5j.writeLine("begin at :" + MyDateUtil.getFormatDateTime(begin,MyConst.YYYYMMDDHHMMSSSSS));
 				MyLog5j.writeLine("end   at :" + MyDateUtil.getFormatDateTime(end,MyConst.YYYYMMDDHHMMSSSSS));
 				MyLog5j.writeLine("cost time:" + MyDateUtil.getMsHour(end.getTime()-begin.getTime()));
+				MyLog5j.writeLine(MyConst.s_version);
 				MyLog5j.close();
 			} catch (Throwable e) {
 				e.printStackTrace();
@@ -80,8 +108,8 @@ public class CompareFileLst {
 				MyLog5j.writeLine("■■■"+bean.caseNo + " start");
 				MyLog5j.writeLine(bean.inputInfo());
 				bean.initPathBean();
-				MyLog5j.writeLine("path from :"+bean.aPathMap);
-				MyLog5j.writeLine("path to   :"+bean.bPathMap);
+				printInfo(bean.getPathInfo());
+
 				bean.initFileMap();
 				bean.doFilefillter();
 				bean.doNotExistInB();
@@ -99,8 +127,7 @@ public class CompareFileLst {
 		}
 		MyLog5j.writeLine("---------------------------");
 		
-		int okCnt = 0;
-		int ngCnt = 0;
+
 		for (BeanRowInfo bean : lst) {
 			if (bean.isOk) {
 				okCnt++;
@@ -125,6 +152,11 @@ public class CompareFileLst {
 					MyLog5j.writeLine(str);
 				}
 			}
+		}
+	}
+	private static void printInfo(List<String> lstInfo) throws Throwable {
+		for (String str : lstInfo) {
+			MyLog5j.writeLine(str);
 		}
 	}
 }

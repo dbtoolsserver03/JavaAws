@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import co.jp.saisk.utils.aws.AwsS3Utils;
 import co.jp.saisk.utils.base.MyStrUtils;
 import co.jp.saisk.utils.file.MyDirectory;
+import co.jp.saisk.utils.log.MyLog5j;
 
 public class BeanRowInfo {
 
@@ -97,6 +98,12 @@ public class BeanRowInfo {
 			isBFolderAws = true;
 			bFolderSeparator = "/";
 		}
+		fileNmAReg = MyStrUtils.funReplace(fileNmAReg, "~", ",");
+		fileNmBReg = MyStrUtils.funReplace(fileNmBReg, "~", ",");
+		commonKeyFile = MyStrUtils.funReplace(commonKeyFile, "~", ",");
+		subPathAReg = MyStrUtils.funReplace(subPathAReg, "~", ",");
+		subPathBReg = MyStrUtils.funReplace(subPathBReg, "~", ",");
+		commonKeyFolder = MyStrUtils.funReplace(commonKeyFolder, "~", ",");
 	}
 
 	public void doNotExistInB() {
@@ -120,7 +127,7 @@ public class BeanRowInfo {
 				}
 			}
 		}
-		if (noExistMap.isEmpty()&& aFileCnt == bFileCnt) {
+		if (noExistMap.isEmpty()&& aFileCnt <= bFileCnt) {
 			isOk = true;
 		}
 	}
@@ -176,23 +183,29 @@ public class BeanRowInfo {
 							&& this.subPathAReg.contains(yyyymmdd)
 							&& this.fileNmBReg.contains(yyyymmdd)
 							) {
-						String matchCode = "("+yyyymmdd+")";
+						String matchCode = "("+MyConst.YYYYMMDD_REG+")";
 						Pattern pYYYYMMDD = Pattern.compile(matchCode);
 						if (this.fileNmAReg.equals(filePattern)) {
 							Matcher mYYYYMMDD = pYYYYMMDD.matcher(path);
 							if (mYYYYMMDD.find()) {
 								retMap.put(mYYYYMMDD.group() + "_" + key, str);
+							}else {
+								retMap.put(key, str);
 							}
 									
 						} else {
 							Matcher mYYYYMMDD = pYYYYMMDD.matcher(str);
 							if (mYYYYMMDD.find()) {
 								retMap.put(mYYYYMMDD.group() + "_" + key, str);
+							}else {
+								retMap.put(key, str);
 							}
 						}
 					} else {
 						retMap.put(key, str);	
 					}
+				}else {
+					retMap.put(str, str);
 				}
 			}
 		}
@@ -205,11 +218,14 @@ public class BeanRowInfo {
 		try {
 			Pattern.compile(this.commonKeyFile);
 		} catch (Throwable e) {
+			MyLog5j.writeLine(this.commonKeyFile);
 			ngMap.put(this, e);
 		}
 		try {
 			Pattern.compile(this.commonKeyFolder);
+			
 		} catch (Throwable e) {
+			MyLog5j.writeLine(this.commonKeyFolder);
 			ngMap.put(this, e);
 		}
 	}
@@ -261,6 +277,21 @@ public class BeanRowInfo {
 			}
 		}
 		return lst;
+	}
+
+	public List<String> getPathInfo() {
+		
+		List<String> retLst = new ArrayList<>();
+		retLst.add("------- path info ---------");
+		retLst.add("path from :");
+		for (Entry<String,String> entry: this.aPathMap.entrySet()) {
+			retLst.add(entry.getKey()+"="+ entry.getValue());
+		}
+		retLst.add("path to :");
+		for (Entry<String,String> entry: this.bPathMap.entrySet()) {
+			retLst.add(entry.getKey()+"="+ entry.getValue());
+		}
+		return retLst;
 	}
 
 }
